@@ -7,10 +7,21 @@
 
         <link rel="stylesheet" href="style.css">        
         <script src="script.js"></script>
+        <script src="classes/player.js"></script>
+        <script src="classes/invader.js"></script>
+
     </head>
 
-    <body>
-        <div>Lorem ipsum osv</div>
+    <body onload="Awake()">
+
+        <div id="gameArea" class="gameArea">
+
+            <img id="player" class="gameObject" src="sprites/player.png" alt="Player" width="32px" height="32px">
+
+            <div id="invaders"></div>
+            <!-- <img id="invader" class="gameObject" src="sprites/invader.png" alt="Invader" width="32px" height="32px"> -->
+
+        </div>
 
     </body>
 

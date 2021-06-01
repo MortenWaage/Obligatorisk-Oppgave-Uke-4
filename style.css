@@ -1,0 +1,11 @@
+.gameArea
+{
+    width: 800px;
+    height: 600px;
+    background-color: rgb(18, 109, 109);
+}
+
+.gameObject
+{
+    position: absolute;
+}
