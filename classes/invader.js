@@ -7,7 +7,7 @@ class Invader
         this.y = _y;
         this.width = 32;
         this.direction = 1;
-        this.invaderSpeed = 20;
+        this.invaderSpeed = 40;
         this.invaderOffset = _invaderOffset;
 
         this.forwardMovement = 0;
@@ -50,23 +50,37 @@ class Invader
 
     checkDirection()
     {
-        if (this.x > this.maxRight + this.invaderOffset) 
+        if (this.x > this.maxRight + this.invaderOffset && !this.canMoveDown) 
         {
-            this.direction = -1;
             this.canMoveDown = true;
+            this.direction = -1;
+
+            this.y += this.width;
+            this.x += this.invaderSpeed;     
+            
+            this.checkIfInvaded();
         }
 
         else if (this.x < this.maxLeft + this.invaderOffset && this.canMoveDown)
         {
             this.canMoveDown = false;
             this.direction = 1;
+
             this.y += this.width;
-            this.x -= this.width;
+            this.x -= this.invaderSpeed;
         }
     }
 
     destroyInvader()
     {
         this.element.remove();
+    }
+
+    checkIfInvaded()
+    {
+        if (this.y + this.width > gameHeight)
+        {
+            return true;
+        }     
     }
 }

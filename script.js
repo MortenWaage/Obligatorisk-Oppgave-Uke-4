@@ -44,6 +44,7 @@ function Awake()
 
 
 
+
 function startGame(count)
 {
     if (count == 0)
@@ -60,6 +61,7 @@ function startGame(count)
 
 
 
+
 function invaderTicker()
 {
     if (gameOver) return;
@@ -71,6 +73,11 @@ function invaderTicker()
         if (invaders[i] != null)
         {
             invaders[i].moveInvaders();
+
+            if (invaders[i].checkIfInvaded())
+            {
+                endGame();
+            }
         
             if (invaders[i].x > player.x && invaders[i].x < player.x + player.width && invaderCanShoot)
             {
@@ -80,6 +87,8 @@ function invaderTicker()
         }
     }
 }
+
+
 
 
 
@@ -97,6 +106,7 @@ function missileTicker()
 
     checkCollisions();
 }
+
 
 
 
@@ -156,6 +166,9 @@ function GetPlayerInput(e)
 }
 
 
+
+
+
 function fireMissile(source, type)
 {
     let newMissile = new Missile(missiles.length+1, source.x+source.width/2, source.y, type);
@@ -163,10 +176,15 @@ function fireMissile(source, type)
 }
 
 
+
+
+
 function unlockWeapon()
 {
     missileLock = false;
 }
+
+
 
 
 
@@ -216,10 +234,15 @@ function checkIfCollided(invader, missile, invaderIndex, missileIndex)
             missile.destroyMissile();
             player.destroyPlayer();
 
-            gameOver = true;
-
-            infoScreen.innerHTML = "GAME OVER";
-
+            endGame();
         }
     }        
+}
+
+
+
+function endGame()
+{
+    gameOver = true;
+    infoScreen.innerHTML = "GAME OVER";
 }
