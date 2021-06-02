@@ -6,7 +6,7 @@ class Player
         this.x = _x;
         this.y = _y;
         this.width = 64;
-        this.playerSpeed = 15;
+        this.playerSpeed = 30;
         this.missileCooldown = 1000; //miliseconds
         this.element.style.width = "64px";
         this.element.style.height = "64px";
