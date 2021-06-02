@@ -5,9 +5,12 @@ class Invader
         this.id = _id;
         this.x = _x;
         this.y = _y;
+        this.width = 32;
         this.direction = 1;
         this.invaderSpeed = 20;
         this.invaderOffset = _invaderOffset;
+
+        this.forwardMovement = 0;
 
         this.maxLeft = 100;
         this.maxRight = 400;
@@ -47,7 +50,23 @@ class Invader
 
     checkDirection()
     {
-        if (this.x > this.maxRight + this.invaderOffset) this.direction = -1;
-        else if (this.x < this.maxLeft + this.invaderOffset) this.direction = 1;
+        if (this.x > this.maxRight + this.invaderOffset) 
+        {
+            this.direction = -1;
+            this.canMoveDown = true;
+        }
+
+        else if (this.x < this.maxLeft + this.invaderOffset && this.canMoveDown)
+        {
+            this.canMoveDown = false;
+            this.direction = 1;
+            this.y += this.width;
+            this.x -= this.width;
+        }
+    }
+
+    destroyInvader()
+    {
+        this.element.remove();
     }
 }

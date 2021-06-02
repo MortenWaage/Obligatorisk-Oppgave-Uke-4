@@ -3,8 +3,11 @@ class Missile
     constructor(_id, _x, _y, _type)
     {
         this.id = _id;
-        this.x = _x;
+        this.width = 4;
+
+        this.x = _x - this.width;
         this.y = _y;
+        
         this.speed = 15;
         this.type = _type;
 
@@ -42,7 +45,11 @@ class Missile
 
     checkScreenPosition()
     {
-        if (this.y < 0)
+        if (this.y < 0 && this.type == -1)
+        {
+            this.destroyMissile();
+        }
+        if (this.y > 600 && this.type == 1)
         {
             this.destroyMissile();
         }

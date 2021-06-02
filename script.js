@@ -2,20 +2,30 @@ var gameArea;
 
 const gameWidth = 800;
 const gameHeight = 600;
+var gameAreaOffset;
 
 var player;
 var invaders = [];
 var missiles = [];
+var missileLock;
+
 const invaderCount = 24;
 const invaderRows = 4;
 
 const playerSpeed = 2;
+const playerSize = 64;
+
+var gameOver = true;
+var infoScreen;
 
 
 
 
 function Awake()
 {
+    infoScreen = document.getElementById("info");
+    gameAreaOffset = document.getElementById("gameArea").getBoundingClientRect().left;
+
     document.addEventListener("keydown", GetPlayerInput);
     gameArea = document.getElementById("gameArea");
 
@@ -23,6 +33,22 @@ function Awake()
 
     setInterval(invaderTicker, 1000);
     setInterval(missileTicker, 50);
+
+    startGame(3);
+}
+
+function startGame(count)
+{
+    if (count == 0)
+    {
+        gameOver = false;
+        infoScreen.innerHTML = "";
+        return;
+    }
+
+    infoScreen.innerHTML = count.toString();
+    setTimeout(startGame, player.missileCooldown, count-1)
+
 }
 
 
@@ -30,9 +56,22 @@ function Awake()
 
 function invaderTicker()
 {
-    for (i = 0; i < invaderCount; i++)
+    if (gameOver) return;
+
+    let invaderCanShoot = true;
+
+    for (i = invaderCount-1; i >= 0; i--)
     {
-        invaders[i].moveInvaders();
+        if (invaders[i] != null)
+        {
+            invaders[i].moveInvaders();
+        
+            if (invaders[i].x > player.x && invaders[i].x < player.x + player.width && invaderCanShoot)
+            {
+                fireMissile(invaders[i], 1);
+                invaderCanShoot = false;
+            }
+        }
     }
 }
 
@@ -58,13 +97,13 @@ function missileTicker()
 
 function runGameSetup()
 {
-    player = new Player(document.getElementById("player"), gameWidth/2-16, gameHeight-32);
+    player = new Player(document.getElementById("player"), gameWidth/2-playerSize, gameHeight-(playerSize+10));
 
     for (i = 0; i < invaderCount/invaderRows; i++)
     {
         for (r = 0; r < invaderRows; r++)
         {
-            let newInvader = new Invader(260 + (32*i) + (15*i), 200 + (32*r) + (15*r), i, (32*i) + (15*i));
+            let newInvader = new Invader(260 + (32*i) + (15*i), 100 + (32*r) + (15*r), i, (32*i) + (15*i));
             invaders.push(newInvader);           
         }
     }    
@@ -85,6 +124,8 @@ function getPixels(coord)
 
 function GetPlayerInput(e)
 {
+    if (gameOver) return;
+
     let direction = 0;
 
     if (e.code == "ArrowLeft")
@@ -97,16 +138,29 @@ function GetPlayerInput(e)
         direction += 1;
     }
 
-    if (e.code == "Space")
+    if (e.code == "Space" && !missileLock)
     {
-        let newMissile = new Missile(missiles.length+1, player.x, player.y, -1);
-        missiles.push(newMissile);
+
+        fireMissile(player, -1);
+        missileLock = true;
+        setTimeout(unlockWeapon, player.missileCooldown)
     }
 
     player.movePlayer(direction);
 }
 
 
+function fireMissile(source, type)
+{
+    let newMissile = new Missile(missiles.length+1, source.x+source.width/2, source.y, type);
+    missiles.push(newMissile);        
+}
+
+
+function unlockWeapon()
+{
+    missileLock = false;
+}
 
 
 
@@ -117,7 +171,7 @@ function checkCollisions()
     {
         for (m = 0; m < missiles.length; m++)
         {
-            checkIfCollided(invaders[i], missiles[m]);
+            checkIfCollided(invaders[i], missiles[m], i, m);
         }
     }
 }
@@ -126,14 +180,40 @@ function checkCollisions()
 
 
 
-function checkIfCollided(invader, missile)
+function checkIfCollided(invader, missile, invaderIndex, missileIndex)
 {
-    //console.log("Checking Collision between: Invader:" + _invader.id + " and Missile:" + _missile.id);
-    if (missile.x > invader.x && missile.x < invader.x + 32 &&
-        missile.y > invader.y && missile.y < invader.y + 32)
+    if (gameOver) return;
+
+    if (missile.type == -1)
+    {
+    if (missile.x > invader.x && missile.x < invader.x + invader.width &&
+        missile.y > invader.y && missile.y < invader.y + invader.width)
         {
             invader.element.style.width = 0;
             invader.element.style.height = 0;
-            //missile.destroyMissile();
-        }        
+
+            missiles.splice(missileIndex,1);
+            invaders.splice(invaderIndex, 1);
+
+            missile.destroyMissile();
+            invader.destroyInvader();
+
+            if (invaders.length == 0)
+            infoScreen.innerHTML = "VICTORY";
+        }
+    }
+    else
+    {
+        if (missile.x > player.x && missile.x < player.x + player.width &&
+            missile.y > player.y && missile.y < player.y + player.width)
+        {
+            missile.destroyMissile();
+            player.destroyPlayer();
+
+            gameOver = true;
+
+            infoScreen.innerHTML = "GAME OVER";
+
+        }
+    }        
 }
