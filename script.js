@@ -1,19 +1,23 @@
 var gameArea;
+var gameAreaOffset;
 
 const gameWidth = 800;
 const gameHeight = 600;
-var gameAreaOffset;
-
-var player;
-var invaders = [];
-var missiles = [];
-var missileLock;
 
 const invaderCount = 24;
 const invaderRows = 4;
 
 const playerSpeed = 2;
 const playerSize = 64;
+
+
+
+var player;
+var invaders = [];
+var missiles = [];
+var missileLock;
+
+
 
 var gameOver = true;
 var infoScreen;
@@ -37,6 +41,9 @@ function Awake()
     startGame(3);
 }
 
+
+
+
 function startGame(count)
 {
     if (count == 0)
@@ -48,7 +55,6 @@ function startGame(count)
 
     infoScreen.innerHTML = count.toString();
     setTimeout(startGame, player.missileCooldown, count-1)
-
 }
 
 
