@@ -5,10 +5,17 @@ class Player
         this.element = _element;
         this.x = _x;
         this.y = _y;
+        this.playerSpeed = 15;
 
         this.updatePlayer();
     }
 
+    movePlayer(direction)
+    {
+        this.x += direction * this.playerSpeed;
+
+        this.updatePlayer();
+    }
     updatePlayer()
     {
         this.element.style.left = getPixels(this.x);
