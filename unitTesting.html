@@ -22,10 +22,11 @@
     });
 
     // Test 2
-    QUnit.module("Test av _____", function() {
-      QUnit.test('     ', function(assert) {
-        let actual = getPixels(200);
-        let expected = "200px";
+    QUnit.module("Test av guard clause", function() {
+      QUnit.test('tester om guard clause i invaderTicker() oppfører seg korrekt', function(assert) {
+        gameOver = true;
+        let actual = invaderTicker();
+        let expected = false;
         assert.equal(actual, expected);
       });
     });
