@@ -1,6 +1,7 @@
 var gameArea;
 var gameAreaOffset;
 
+const gameVolume = 0.2;
 const gameWidth = 800;
 const gameHeight = 600;
 
@@ -310,8 +311,7 @@ function checkVictory()
 {
     if (invaders.length == 0)
     {
-        music.pause();
-        fanfare.play();
+        playSound(fanfare);
         setInfoDisplay("VICTORY");
     }
 
@@ -333,6 +333,7 @@ function endGame()
 
 function playSound(sound)
 {
+    sound.volume = gameVolume;
     sound.currentTime = 0;
     sound.play();
 }
@@ -340,6 +341,7 @@ function playSound(sound)
 
 function playMusic()
 {
+    music.volume = gameVolume;
     music.currentTime = 0;
     music.loop = true;
     music.play();

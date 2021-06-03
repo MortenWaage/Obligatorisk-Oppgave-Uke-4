@@ -8,8 +8,12 @@ class Missile
         this.x = _x - this.width;
         this.y = _y;
         
+        this.invaderSpeed = 15;
         this.speed = 15;
         this.type = _type;
+
+        if (this.type == 1)
+            this.speed = this.invaderSpeed;
 
         this.spawnMissile();
         this.updateMissile();
@@ -59,5 +63,4 @@ class Missile
     {
         this.element.remove();
     }
-
 }

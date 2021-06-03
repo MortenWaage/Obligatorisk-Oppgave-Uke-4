@@ -1,3 +1,10 @@
+/* .centered
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} */
+
 .gameArea
 {
     background-image: url("img/background.png");
