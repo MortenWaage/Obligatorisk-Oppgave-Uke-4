@@ -16,12 +16,15 @@ var missiles = [];
 var missileLock;
 
 var gameOver = true;
+var isStarted = false;
 var infoScreen;
 
 /// AUDIO
 const shoot = document.getElementById("shoot");
 const impact = document.getElementById("impact");
 const death = document.getElementById("death");
+const music = document.getElementById("music");
+const fanfare = document.getElementById("fanfare");
 
 
 function Awake()
@@ -34,10 +37,10 @@ function Awake()
 
     runGameSetup();
 
-    setInterval(invaderTicker, 1000);
-    setInterval(missileTicker, 50);
+    setInfoDisplay("SPACEBAR TO START");    
 
-    startGame(3);
+    setInterval(invaderTicker, 1000);
+    setInterval(missileTicker, 50);    
 }
 
 
@@ -74,6 +77,7 @@ function startGame(count)
 
     infoScreen.innerHTML = count.toString();
     setTimeout(startGame, player.missileCooldown, count-1)
+    
 }
 
 
@@ -158,6 +162,16 @@ function getPixels(coord)
 
 function GetPlayerInput(e)
 {
+    if (!isStarted)
+    {
+        if (e.code == "Space")
+        {
+            playMusic();
+            isStarted = true;
+            startGame(3);            
+        }
+    }
+
     if (gameOver) return;
 
     let direction = 0;
@@ -295,7 +309,12 @@ function checkInvaderCollision(missile, invader)
 function checkVictory()
 {
     if (invaders.length == 0)
-    setInfoDisplay("VICTORY");
+    {
+        music.pause();
+        fanfare.play();
+        setInfoDisplay("VICTORY");
+    }
+
 }
 
 
@@ -316,4 +335,12 @@ function playSound(sound)
 {
     sound.currentTime = 0;
     sound.play();
+}
+
+
+function playMusic()
+{
+    music.currentTime = 0;
+    music.loop = true;
+    music.play();
 }
