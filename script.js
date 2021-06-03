@@ -233,7 +233,7 @@ function checkIfCollided(invader, missile, invaderIndex, missileIndex)
     // -1 og 1 refererer til rettningen på missilen. Trenger ikke sjekke missiler skutt av invaders opp mot invaders, og vice versa om missilen er skutt av spilleren.
     if (missile.type == -1)
     {
-        if (checkInvaderCollision(invader, missile))
+        if (checkInvaderCollision(missile, invader))
         {
             missiles.splice(missileIndex,1);
             invaders.splice(invaderIndex, 1);
@@ -278,7 +278,7 @@ function checkPlayerCollision(missile)
 
 
 
-function checkInvaderCollision(invader, missile)
+function checkInvaderCollision(missile, invader)
 {
     if (missile.x > invader.x && missile.x < invader.x + invader.width &&
         missile.y > invader.y && missile.y < invader.y + invader.width)
