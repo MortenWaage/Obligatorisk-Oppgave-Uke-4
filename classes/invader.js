@@ -1,19 +1,24 @@
 class Invader
 {
-    constructor(_x, _y, _id, _invaderOffset)
+    constructor(_x, _y, _invaderOffset, forceWidth, forceForward)
     {
-        this.id = _id;
-        this.x = _x;
-        this.y = _y;
+        this.id = _x; // 1-2-3 osv
+
+        
         this.width = 32;
         this.direction = 1;
         this.invaderSpeed = 40;
-        this.invaderOffset = _invaderOffset;
+        this.invaderOffset = this.width * _x + (_invaderOffset * _x);
+        
+        this.invaderForceLeft = (gameWidth / 2) - ((forceWidth * (this.width + _invaderOffset) / 2) );
+
+        this.x = this.invaderForceLeft + (this.width * _x) + (_invaderOffset * _x);
+        this.y = forceForward + (this.width*_y) + (_invaderOffset*_y);
 
         this.forwardMovement = 0;
 
-        this.maxLeft = 100;
-        this.maxRight = 400;
+        this.maxLeft = gameAreaOffset;
+        this.maxRight = 500;
 
         this.spawnInvader();
         this.updateInvader();
@@ -50,9 +55,9 @@ class Invader
 
     checkDirection()
     {
-        if (this.x > this.maxRight + this.invaderOffset && !this.canMoveDown) 
+        if (this.x > this.maxRight + this.invaderOffset && !this.alternateForwardMove) 
         {
-            this.canMoveDown = true;
+            this.alternateForwardMove = true;
             this.direction = -1;
 
             this.y += this.width;
@@ -61,9 +66,9 @@ class Invader
             this.checkIfInvaded();
         }
 
-        else if (this.x < this.maxLeft + this.invaderOffset && this.canMoveDown)
+        else if ( this.x < this.maxLeft + this.invaderOffset + this.width && this.alternateForwardMove)
         {
-            this.canMoveDown = false;
+            this.alternateForwardMove = false;
             this.direction = 1;
 
             this.y += this.width;

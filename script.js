@@ -10,28 +10,27 @@ const invaderRows = 4;
 const playerSpeed = 2;
 const playerSize = 64;
 
-
-
 var player;
 var invaders = [];
 var missiles = [];
 var missileLock;
 
-
-
 var gameOver = true;
 var infoScreen;
 
-
+/// AUDIO
+const shoot = document.getElementById("shoot");
+const impact = document.getElementById("impact");
+const death = document.getElementById("death");
 
 
 function Awake()
 {
-    infoScreen = document.getElementById("info");
-    gameAreaOffset = document.getElementById("gameArea").getBoundingClientRect().left;
-
     document.addEventListener("keydown", GetPlayerInput);
+
+    infoScreen = document.getElementById("info");
     gameArea = document.getElementById("gameArea");
+    gameAreaOffset = document.getElementById("gameArea").getBoundingClientRect().left;
 
     runGameSetup();
 
@@ -45,17 +44,45 @@ function Awake()
 
 
 
+function runGameSetup()
+{
+    player = new Player(document.getElementById("player"), gameWidth/2-playerSize, gameHeight-(playerSize+10));
+
+    for (i = 0; i < invaderCount/invaderRows; i++)
+    {
+        for (r = 0; r < invaderRows; r++)
+        {
+            //let newInvader = new Invader(260 + (32*i) + (15*i), 100 + (32*r) + (15*r), i, (32*i) + (15*i));
+            let newInvader = new Invader(i, r, 15, invaderCount/invaderRows, 100);
+            invaders.push(newInvader);
+        }
+    }    
+}
+
+
+
+
+
 function startGame(count)
 {
     if (count == 0)
     {
-        gameOver = false;
-        infoScreen.innerHTML = "";
+        gameOver = false;  
+        setInfoDisplay("");      
         return;
     }
 
     infoScreen.innerHTML = count.toString();
     setTimeout(startGame, player.missileCooldown, count-1)
+}
+
+
+
+
+
+function setInfoDisplay(string)
+{
+    infoScreen.innerHTML = string;
 }
 
 
@@ -75,17 +102,26 @@ function invaderTicker()
             invaders[i].moveInvaders();
 
             if (invaders[i].checkIfInvaded())
-            {
                 endGame();
-            }
-        
-            if (invaders[i].x > player.x && invaders[i].x < player.x + player.width && invaderCanShoot)
+
+            
+            if (invaderAbovePlayer(invaders[i]) && invaderCanShoot)
             {
                 fireMissile(invaders[i], 1);
                 invaderCanShoot = false;
             }
         }
     }
+}
+
+
+
+
+
+function invaderAbovePlayer(invader)
+{
+    if (invader.x > player.x && invader.x < player.x + player.width) return true;
+    else return false;
 }
 
 
@@ -111,24 +147,6 @@ function missileTicker()
 
 
 
-function runGameSetup()
-{
-    player = new Player(document.getElementById("player"), gameWidth/2-playerSize, gameHeight-(playerSize+10));
-
-    for (i = 0; i < invaderCount/invaderRows; i++)
-    {
-        for (r = 0; r < invaderRows; r++)
-        {
-            let newInvader = new Invader(260 + (32*i) + (15*i), 100 + (32*r) + (15*r), i, (32*i) + (15*i));
-            invaders.push(newInvader);           
-        }
-    }    
-}
-
-
-
-
-
 function getPixels(coord)
 {
     return coord.toString() + "px";
@@ -146,20 +164,18 @@ function GetPlayerInput(e)
 
     if (e.code == "ArrowLeft")
     {
-        direction -= 1;
+        direction = -1;
     }
 
     else if (e.code == "ArrowRight")
     {
-        direction += 1;
+        direction = 1;
     }
 
     if (e.code == "Space" && !missileLock)
     {
-
         fireMissile(player, -1);
-        missileLock = true;
-        setTimeout(unlockWeapon, player.missileCooldown)
+        playSound(shoot);      
     }
 
     player.movePlayer(direction);
@@ -171,6 +187,12 @@ function GetPlayerInput(e)
 
 function fireMissile(source, type)
 {
+    if (source == player)
+    {
+        missileLock = true;
+        setTimeout(unlockWeapon, player.missileCooldown)
+    }
+
     let newMissile = new Missile(missiles.length+1, source.x+source.width/2, source.y, type);
     missiles.push(newMissile);        
 }
@@ -208,29 +230,28 @@ function checkIfCollided(invader, missile, invaderIndex, missileIndex)
 {
     if (gameOver) return;
 
+    // -1 og 1 refererer til rettningen på missilen. Trenger ikke sjekke missiler skutt av invaders opp mot invaders, og vice versa om missilen er skutt av spilleren.
     if (missile.type == -1)
     {
-    if (missile.x > invader.x && missile.x < invader.x + invader.width &&
-        missile.y > invader.y && missile.y < invader.y + invader.width)
+        if (checkInvaderCollision(invader, missile))
         {
-            invader.element.style.width = 0;
-            invader.element.style.height = 0;
-
             missiles.splice(missileIndex,1);
             invaders.splice(invaderIndex, 1);
 
             missile.destroyMissile();
             invader.destroyInvader();
 
-            if (invaders.length == 0)
-            infoScreen.innerHTML = "VICTORY";
+            playSound(impact);
+
+            checkVictory();
         }
     }
-    else
+    else if (missile.type == 1)
     {
-        if (missile.x > player.x && missile.x < player.x + player.width &&
-            missile.y > player.y && missile.y < player.y + player.width)
+        if (checkPlayerCollision(missile))
         {
+            playSound(death);  
+
             missile.destroyMissile();
             player.destroyPlayer();
 
@@ -241,8 +262,58 @@ function checkIfCollided(invader, missile, invaderIndex, missileIndex)
 
 
 
+
+
+function checkPlayerCollision(missile)
+{
+    if (missile.x > player.x && missile.x < player.x + player.width &&
+        missile.y > player.y && missile.y < player.y + player.width)
+    {
+        return true;
+    }
+    else return false;
+}
+
+
+
+
+
+function checkInvaderCollision(invader, missile)
+{
+    if (missile.x > invader.x && missile.x < invader.x + invader.width &&
+        missile.y > invader.y && missile.y < invader.y + invader.width)
+    {
+        return true
+    }
+    else return false;
+}
+
+
+
+
+
+function checkVictory()
+{
+    if (invaders.length == 0)
+    setInfoDisplay("VICTORY");
+}
+
+
+
+
+
 function endGame()
 {
     gameOver = true;
-    infoScreen.innerHTML = "GAME OVER";
+    setInfoDisplay("GAME OVER");
+}
+
+
+
+
+
+function playSound(sound)
+{
+    sound.currentTime = 0;
+    sound.play();
 }
