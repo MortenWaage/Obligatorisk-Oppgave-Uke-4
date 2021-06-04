@@ -8,10 +8,19 @@ class Player
         this.width = 64;
         this.playerSpeed = 30;
         this.missileCooldown = 1000; //miliseconds
-        this.element.style.width = "64px";
-        this.element.style.height = "64px";
+        this.element.style.width = getPixels(this.width);
+        this.element.style.height = getPixels(this.width);
 
+        this.sIndex = 0;
+        this.spriteIndex = ["sprites/playerShoot.png", "sprites/playerCantShoot.png"];
+        this.element.src = this.spriteIndex[this.sIndex];
         this.updatePlayer();
+    }
+
+    changeState()
+    {
+        this.sIndex = 1-this.sIndex;
+        this.element.src = this.spriteIndex[this.sIndex];
     }
 
     movePlayer(direction)

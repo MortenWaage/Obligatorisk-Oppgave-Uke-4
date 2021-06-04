@@ -41,6 +41,7 @@ function Awake()
     setInfoDisplay("SPACEBAR TO START");    
 
     setInterval(invaderTicker, 1000);
+    setInterval(animationTicker, 200);
     setInterval(missileTicker, 50);    
 }
 
@@ -77,7 +78,7 @@ function startGame(count)
     }
 
     infoScreen.innerHTML = count.toString();
-    setTimeout(startGame, player.missileCooldown, count-1)
+    setTimeout(startGame, 1000, count-1)
     
 }
 
@@ -92,7 +93,13 @@ function setInfoDisplay(string)
 
 
 
-
+function animationTicker()
+{
+    for (i = 0; i < invaders.length; i++)
+    {
+        invaders[i].changeState();
+    }
+}
 
 function invaderTicker()
 {
@@ -113,6 +120,7 @@ function invaderTicker()
             if (invaderAbovePlayer(invaders[i]) && invaderCanShoot)
             {
                 fireMissile(invaders[i], 1);
+                invaders[i].changeState(3)
                 invaderCanShoot = false;
             }
         }
@@ -190,6 +198,7 @@ function GetPlayerInput(e)
     if (e.code == "Space" && !missileLock)
     {
         fireMissile(player, -1);
+        player.changeState();
         playSound(shoot);      
     }
 
@@ -218,7 +227,10 @@ function fireMissile(source, type)
 
 function unlockWeapon()
 {
+    if (gameOver) return;
+    
     missileLock = false;
+    player.changeState();
 }
 
 
@@ -227,7 +239,6 @@ function unlockWeapon()
 
 function checkCollisions()
 {
-    //console.log("Looping through collisions");
     for (i = 0; i < invaders.length; i++)
     {
         for (m = 0; m < missiles.length; m++)
@@ -255,7 +266,6 @@ function checkIfCollided(invader, missile, invaderIndex, missileIndex)
 
             missile.destroyMissile();
             invader.destroyInvader();
-
             playSound(impact);
 
             checkVictory();
