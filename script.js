@@ -2,7 +2,7 @@ var gameArea;
 var gameAreaOffset;
 
 const gameVolume = 0.2;
-const musicVolume = 0;
+const musicVolume = 0.1;
 
 const gameWidth = 800;
 const gameHeight = 600;

@@ -11,7 +11,7 @@ class Missile
         this.y = _y;
         
         this.invaderSpeed = 10;
-        this.speed = 15;
+        this.speed = 30;
         this.type = _type;
 
         this.isDestroyed = false;
