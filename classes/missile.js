@@ -53,19 +53,8 @@ class Missile
 
     checkScreenPosition()
     {
-        if (this.y < 0 && this.type == -1)
-        {
-            // if (!this.isDestroyed)
-            // {                
-            //     this.isDestroyed = true;
-            // }
-
+        if (this.y < 0 || this.y > gameHeight)
             this.destroyMissile();
-        }
-        if (this.y > 600 && this.type == 1)
-        {
-            this.destroyMissile();            
-        }
     }
 
     destroyMissile()
