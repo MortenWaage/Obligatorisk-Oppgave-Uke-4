@@ -1,11 +1,13 @@
 class Player
 {
-    constructor(_element, _x, _y)
+    constructor(_element)
     {
         this.element = _element;
-        this.x = _x;
-        this.y = _y;
         this.width = 64;
+
+        this.x = gameWidth/2 - this.width/2;
+        this.y = gameHeight-(playerSize+10)
+        
         this.playerSpeed = 30;
         this.missileCooldown = 1000; //miliseconds
         this.element.style.width = getPixels(this.width);

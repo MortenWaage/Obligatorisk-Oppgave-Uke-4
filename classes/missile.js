@@ -2,15 +2,19 @@ class Missile
 {
     constructor(_id, _x, _y, _type)
     {
-        this.id = _id;
+        if (_id == undefined)   this.id = 0;
+        else    this.id = _id;
+
         this.width = 4;
 
         this.x = _x - this.width;
         this.y = _y;
         
-        this.invaderSpeed = 15;
+        this.invaderSpeed = 10;
         this.speed = 15;
         this.type = _type;
+
+        this.isDestroyed = false;
 
         if (this.type == 1)
             this.speed = this.invaderSpeed;
@@ -51,16 +55,23 @@ class Missile
     {
         if (this.y < 0 && this.type == -1)
         {
+            // if (!this.isDestroyed)
+            // {                
+            //     this.isDestroyed = true;
+            // }
+
             this.destroyMissile();
         }
         if (this.y > 600 && this.type == 1)
         {
-            this.destroyMissile();
+            this.destroyMissile();            
         }
     }
 
     destroyMissile()
-    {
+    {   
+        checkMissedShots(this.type, this.y); // controller.js
+        this.id = null
         this.element.remove();
     }
 }

@@ -2,6 +2,8 @@ var gameArea;
 var gameAreaOffset;
 
 const gameVolume = 0.2;
+const musicVolume = 0;
+
 const gameWidth = 800;
 const gameHeight = 600;
 
@@ -42,7 +44,9 @@ function Awake()
 
     setInterval(invaderTicker, 1000);
     setInterval(animationTicker, 200);
-    setInterval(missileTicker, 50);    
+    setInterval(missileTicker, 50); 
+    
+    updateView();
 }
 
 
@@ -51,13 +55,12 @@ function Awake()
 
 function runGameSetup()
 {
-    player = new Player(document.getElementById("player"), gameWidth/2-playerSize, gameHeight-(playerSize+10));
+    player = new Player(document.getElementById("player"));
 
     for (i = 0; i < invaderCount/invaderRows; i++)
     {
         for (r = 0; r < invaderRows; r++)
         {
-            //let newInvader = new Invader(260 + (32*i) + (15*i), 100 + (32*r) + (15*r), i, (32*i) + (15*i));
             let newInvader = new Invader(i, r, 15, invaderCount/invaderRows, 100);
             invaders.push(newInvader);
         }
@@ -93,6 +96,8 @@ function setInfoDisplay(string)
 
 
 
+
+
 function animationTicker()
 {
     for (i = 0; i < invaders.length; i++)
@@ -100,6 +105,10 @@ function animationTicker()
         invaders[i].changeState();
     }
 }
+
+
+
+
 
 function invaderTicker()
 {
@@ -145,10 +154,8 @@ function missileTicker()
 {
     for (m = 0; m < missiles.length; m++)
     {
-        if (missiles[m].element == null)
-        {
+        if (missiles[m].id == null)
             missiles.splice(m,1);
-        }
         else
             missiles[m].moveForward();
     }
@@ -199,7 +206,8 @@ function GetPlayerInput(e)
     {
         fireMissile(player, -1);
         player.changeState();
-        playSound(shoot);      
+        playSound(shoot);
+        addShot();    
     }
 
     player.movePlayer(direction);
@@ -217,7 +225,7 @@ function fireMissile(source, type)
         setTimeout(unlockWeapon, player.missileCooldown)
     }
 
-    let newMissile = new Missile(missiles.length+1, source.x+source.width/2, source.y, type);
+    let newMissile = new Missile(missiles.length, source.x+source.width/2, source.y, type);
     missiles.push(newMissile);        
 }
 
@@ -228,7 +236,7 @@ function fireMissile(source, type)
 function unlockWeapon()
 {
     if (gameOver) return;
-    
+
     missileLock = false;
     player.changeState();
 }
@@ -261,6 +269,8 @@ function checkIfCollided(invader, missile, invaderIndex, missileIndex)
     {
         if (checkInvaderCollision(missile, invader))
         {
+            checkInvaderKills(); // controller.js
+
             missiles.splice(missileIndex,1);
             invaders.splice(invaderIndex, 1);
 
@@ -324,7 +334,6 @@ function checkVictory()
         playSound(fanfare);
         setInfoDisplay("VICTORY");
     }
-
 }
 
 
@@ -351,7 +360,7 @@ function playSound(sound)
 
 function playMusic()
 {
-    music.volume = gameVolume;
+    music.volume = musicVolume;
     music.currentTime = 0;
     music.loop = true;
     music.play();

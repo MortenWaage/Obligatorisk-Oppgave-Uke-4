@@ -7,23 +7,39 @@
   <div id="qunit-fixture"></div>
   <script src="https://code.jquery.com/qunit/qunit-2.15.0.js"></script>
   <script src="script.js"></script>
+  <script src="MVC/controller.js"></script>
 </body>
 
 <script>
-    
+    // // dummy modell
+    //   var test = 0;
+
+    // //dummy view
+    function updateView(){};
+
+
+  
+      // QUnit.test('Converts a raw number to a pixel value', function(assert) {
+       
+      //   testfunc();
+      //   let actual = test;
+      //   let expected = 10;
+      //   assert.equal(actual, expected);
+      // });
+   
 
     // Test 1
-    QUnit.module("(1) :: Test av getPixels()", function() {
-      QUnit.test('Converts a raw number to a pixel value', function(assert) {
+
+      QUnit.test('Sjekk funksjon som konverterer tall til pixler', function(assert) {
         let actual = getPixels(200);
         let expected = "200px";
         assert.equal(actual, expected);
       });
-    });
+
 
     // Test 2
-    QUnit.module("(2) :: Test av Test av checkInvaderCollision()", function() {
-      QUnit.test('Test om object kolliderer med annet objekt', function(assert) {
+
+      QUnit.test('Test om enhet kolliderer med annen enhet', function(assert) {
 
         const obj1 = {
             x: 220,
@@ -36,24 +52,30 @@
             width: 50
         };
 
-        // if ( obj1.x > obj2.x && obj1.x < obj2.x + obj2.width &&
-        //      obj1.y > obj2.y && obj1.y < obj2.y + obj2.width)
-        //
-        // if ( 220 > 200 && 220 < 250 &&
-        //      110 > 100 && 110 < 150 ) 
+        /*           checkInvaderCollision(unit, unit);       
+
+         if ( obj1.x > obj2.x && obj1.x < obj2.x + obj2.width &&
+              obj1.y > obj2.y && obj1.y < obj2.y + obj2.width)
+        
+         if ( 220 > 200 && 220 < 250 &&
+              110 > 100 && 110 < 150 )                         */
 
         let actual = checkInvaderCollision(obj1, obj2)
         let expected = true;
         assert.equal(actual, expected);
       });
-    });
+
+
+
 
     // Test 3
-    QUnit.module("(3) :: Test av Test av _____", function() {
-      QUnit.test('     ', function(assert) {
-        let actual = true;
-        let expected = true;
+
+      let shotsFired = 0;
+
+      QUnit.test('Test funksjon som legger til hvor mye vi har skutt', function(assert) {
+        addShot();
+        let actual = shotsFired;
+        let expected = 1;
         assert.equal(actual, expected);
       });
-    });
   </script>

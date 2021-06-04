@@ -3,7 +3,6 @@ class Invader
     constructor(_x, _y, _invaderOffset, forceWidth, forceForward)
     {
         this.id = _x; // 1-2-3 osv
-
         
         this.width = 32;
         this.direction = 1;
